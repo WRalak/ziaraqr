@@ -42,17 +42,28 @@ export default function LandingPage() {
           <br />
           Starts Here.
         </h1>
+        <p className="m-0 mb-3 max-w-[34ch] text-lg leading-snug text-text">
+          Explore the world, Together. Share the journey.
+        </p>
         <p className="m-0 mb-1 max-w-[34ch] text-base leading-relaxed text-text-dim">
           You&apos;re one scan away from your next unforgettable trip.
         </p>
         <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-3.5 py-2 font-cond text-[12.5px] text-text-dim">
           <span className="h-1.5 w-1.5 animate-pulse2 rounded-full bg-[#4ade80]" />
-          <b className="text-gold">300+</b> students already exploring with Ziarra
+          <b className="text-gold">300+</b>  already exploring with Ziarra
         </div>
         <div className="flex-1" />
         <div className="mt-10 max-w-sm">
           <Button href="/choose">Start Exploring →</Button>
         </div>
+      </div>
+
+      <div className="mx-auto w-full max-w-2xl px-6 pb-14 pt-2 sm:px-10 lg:px-12">
+        <p className="m-0 max-w-[46ch] text-sm leading-relaxed text-text-dim">
+          Ziarra is a people-first travel community. We pair people who want to
+          explore with the peers who love organizing the trip — every adventure
+          is small-group, vetted, and built around real connection.
+        </p>
       </div>
     </div>
   );

@@ -49,7 +49,7 @@ export default function HostIntroPage() {
 
         <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-3.5 py-2 font-cond text-[12.5px] text-text-dim">
           <span className="h-1.5 w-1.5 animate-pulse2 rounded-full bg-[#4ade80]" />
-          40+ student hosts already building with Ziarra
+          80+  hosts already building with Ziarra
         </div>
       </Screen>
       <CtaDock sticky={false}>

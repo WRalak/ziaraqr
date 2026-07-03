@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Barlow_Condensed, Barlow } from "next/font/google";
 import "./globals.css";
 import ToastProvider from "@/components/ToastProvider";
+import Footer from "@/components/Footer";
 
 const display = Cormorant_Garamond({
   subsets: ["latin"],
@@ -44,7 +45,10 @@ export default function RootLayout({
     <html lang="en" className={`${display.variable} ${cond.variable} ${body.variable}`}>
       <body className="min-h-screen bg-bg font-body text-text antialiased">
         <ToastProvider>
-          <div className="flex min-h-screen flex-col">{children}</div>
+          <div className="flex min-h-screen flex-col">
+            <div className="flex flex-1 flex-col">{children}</div>
+            <Footer />
+          </div>
         </ToastProvider>
       </body>
     </html>

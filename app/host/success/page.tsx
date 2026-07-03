@@ -17,7 +17,7 @@ export default function HostSuccessPage() {
           glyph: "💬",
           title: "Join the Hosts WhatsApp",
           subtitle: "Meet other student hosts",
-          href: "https://wa.me/254700000000",
+          href: "https://wa.me/+254114442895",
           external: true,
         },
       ]}
