@@ -9,6 +9,8 @@ export default function HostForm() {
   const router = useRouter();
   const [groupSize, setGroupSize] = useState(10);
   const [dest, setDest] = useState<Set<string>>(new Set());
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   function toggleDest(d: string) {
     setDest((prev) => {
@@ -19,27 +21,56 @@ export default function HostForm() {
     });
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setSubmitting(true);
+    setError("");
+
+    const formData = new FormData(e.currentTarget);
+    const response = await fetch("/api/host-applications", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fullName: formData.get("fullName"),
+        phone: formData.get("phone"),
+        email: formData.get("email"),
+        course: formData.get("course"),
+        studyYear: formData.get("studyYear"),
+        socialMedia: formData.get("socialMedia"),
+        groupSize,
+        destinations: Array.from(dest),
+        motivation: formData.get("motivation"),
+        source: "qr-strathmore-cultural-week",
+        consent: formData.get("consent") === "on",
+      }),
+    });
+    const result = (await response.json()) as { error?: string };
+
+    if (!response.ok) {
+      setError(result.error ?? "We could not save your application.");
+      setSubmitting(false);
+      return;
+    }
+
     router.push("/host/success");
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <Field label="Full name">
-        <input required type="text" placeholder="e.g. Kevin Otieno" />
+        <input required name="fullName" type="text" autoComplete="name" placeholder="e.g. Kevin Otieno" />
       </Field>
       <Field label="Phone number">
-        <input required type="tel" placeholder="07XX XXX XXX" />
+        <input required name="phone" type="tel" autoComplete="tel" placeholder="07XX XXX XXX" />
       </Field>
       <Field label="Email">
-        <input required type="email" placeholder="you@student.ac.ke" />
+        <input required name="email" type="email" autoComplete="email" placeholder="you@student.ac.ke" />
       </Field>
       <Field label="Course">
-        <input required type="text" placeholder="e.g. Commerce, Finance" />
+        <input required name="course" type="text" placeholder="e.g. Commerce, Finance" />
       </Field>
       <Field label="Year of study">
-        <select required defaultValue="">
+        <select required name="studyYear" defaultValue="">
           <option value="">Select year</option>
           <option>Year 1</option>
           <option>Year 2</option>
@@ -50,7 +81,7 @@ export default function HostForm() {
         </select>
       </Field>
       <Field label="Social media" opt>
-        <input type="text" placeholder="@yourhandle" />
+        <input name="socialMedia" type="text" placeholder="@yourhandle" />
       </Field>
 
       <div>
@@ -101,11 +132,28 @@ export default function HostForm() {
       <Field label="Why would you like to host?">
         <textarea
           required
+          name="motivation"
           placeholder="Tell us what's driving you to lead trips..."
         />
       </Field>
 
-      <Button type="submit">Submit Application</Button>
+      <label className="flex items-start gap-3 rounded-md2 border border-line bg-card p-3.5 text-sm leading-snug text-text-dim">
+        <input required name="consent" type="checkbox" className="mt-0.5 h-4 w-4 accent-gold" />
+        <span>
+          I agree that Ziarra may use these details to review my application and contact me.{" "}
+          <a href="/privacy" target="_blank" className="text-gold underline underline-offset-2">
+            Privacy notice
+          </a>
+        </span>
+      </label>
+      {error && (
+        <div role="alert" className="rounded-md2 border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-200">
+          {error}
+        </div>
+      )}
+      <Button type="submit" disabled={submitting}>
+        {submitting ? "Saving…" : "Submit Application"}
+      </Button>
     </form>
   );
 }

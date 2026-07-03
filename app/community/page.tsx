@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/components/Button";
+import ShareWithFriendButton from "@/components/ShareWithFriendButton";
 import { useToast } from "@/components/ToastProvider";
 
 export default function CommunityPage() {
@@ -21,7 +22,7 @@ export default function CommunityPage() {
       </p>
 
       <div className="flex w-full flex-col gap-2.5">
-        <Button onClick={() => toast("Opening App download link…")}>Download App</Button>
+        <Button href="/download">Download App</Button>
         <Button href="/discover" variant="ghost">
           Browse More Trips
         </Button>
@@ -32,9 +33,7 @@ export default function CommunityPage() {
           <Button variant="outline" onClick={() => toast("Opening Instagram / TikTok…")}>
             Follow Ziarra
           </Button>
-          <Button variant="outline" onClick={() => toast("Opening Share sheet…")}>
-            Share w/ Friend
-          </Button>
+          <ShareWithFriendButton />
         </div>
       </div>
     </div>

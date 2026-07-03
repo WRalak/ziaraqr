@@ -11,8 +11,7 @@ export default function HostSuccessPage() {
           glyph: "📱",
           title: "Download the Ziarra app",
           subtitle: "Set up your host profile",
-          href: "#",
-          fakeLabel: "App download link",
+          href: "/download",
         },
         {
           glyph: "💬",

@@ -1,7 +1,6 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
-import Link from "next/link";
 import Confetti from "./Confetti";
 import Button from "./Button";
 import { useToast, fakeLinkHandler } from "./ToastProvider";

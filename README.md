@@ -13,6 +13,30 @@ npm run dev
 
 Then open http://localhost:3000.
 
+## Data collection
+
+Reservations and host applications are now saved by server-side API routes.
+
+- Local development stores submissions in `.data/submissions.json`.
+- The protected submissions dashboard is at `/admin`.
+- The initial local admin password is configured in `.env.local`. Change it
+  before sharing the app.
+- CSV exports are available from the admin dashboard.
+
+For production, create a Supabase project, run `supabase/schema.sql` in the SQL
+editor, and set:
+
+```env
+SUBMISSION_STORAGE=supabase
+ADMIN_PASSWORD=use-a-strong-private-password
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+SUPABASE_SECRET_KEY=your-server-only-secret-key
+```
+
+Keep `SUPABASE_SECRET_KEY` server-only. Never commit `.env.local` or expose the
+secret key in browser code.
+
 ```bash
 npm run build   # production build
 npm run start   # run the production build

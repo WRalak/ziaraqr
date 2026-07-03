@@ -9,8 +9,13 @@ export function generateStaticParams() {
   return TRIPS.map((t) => ({ id: String(t.id) }));
 }
 
-export default function ReservePage({ params }: { params: { id: string } }) {
-  const trip = getTrip(Number(params.id));
+export default async function ReservePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const trip = getTrip(Number(id));
   if (!trip) notFound();
 
   return (
@@ -22,7 +27,7 @@ export default function ReservePage({ params }: { params: { id: string } }) {
           Reserve {trip.name}.
         </h2>
         <p className="m-0 mb-6 text-base leading-relaxed text-text-dim">
-          Just the essentials — we'll handle the rest over WhatsApp.
+          Just the essentials — we&apos;ll handle the rest over WhatsApp.
         </p>
         <ReserveForm tripId={trip.id} />
       </Screen>

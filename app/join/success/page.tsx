@@ -1,12 +1,13 @@
 import SuccessScreen from "@/components/SuccessScreen";
 import { getTrip } from "@/lib/data";
 
-export default function JoinSuccessPage({
+export default async function JoinSuccessPage({
   searchParams,
 }: {
-  searchParams: { trip?: string };
+  searchParams: Promise<{ trip?: string }>;
 }) {
-  const trip = searchParams.trip ? getTrip(Number(searchParams.trip)) : undefined;
+  const query = await searchParams;
+  const trip = query.trip ? getTrip(Number(query.trip)) : undefined;
 
   return (
     <SuccessScreen
@@ -22,8 +23,7 @@ export default function JoinSuccessPage({
           glyph: "📱",
           title: "Download the Ziarra app",
           subtitle: "Track your trip & chat with the group",
-          href: "#",
-          fakeLabel: "App download link",
+          href: "/download",
         },
         {
           glyph: "💬",

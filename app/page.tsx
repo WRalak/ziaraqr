@@ -43,7 +43,7 @@ export default function LandingPage() {
           Starts Here.
         </h1>
         <p className="m-0 mb-1 max-w-[34ch] text-base leading-relaxed text-text-dim">
-          You're one scan away from your next unforgettable trip.
+          You&apos;re one scan away from your next unforgettable trip.
         </p>
         <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-3.5 py-2 font-cond text-[12.5px] text-text-dim">
           <span className="h-1.5 w-1.5 animate-pulse2 rounded-full bg-[#4ade80]" />

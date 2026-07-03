@@ -12,8 +12,13 @@ export function generateStaticParams() {
   return TRIPS.map((t) => ({ id: String(t.id) }));
 }
 
-export default function TripDetailPage({ params }: { params: { id: string } }) {
-  const trip = getTrip(Number(params.id));
+export default async function TripDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const trip = getTrip(Number(id));
   if (!trip) notFound();
 
   return (
