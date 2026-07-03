@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   ADMIN_COOKIE,
   adminSessionToken,
+  isAdminConfigured,
   isCorrectAdminPassword,
 } from "@/lib/server/admin-auth";
 
@@ -27,6 +28,13 @@ export async function POST(request: Request) {
   }
 
   const password = String(formData.get("password") ?? "");
+
+  if (!isAdminConfigured()) {
+    return NextResponse.redirect(
+      new URL("/admin/login?error=config", request.url),
+      303
+    );
+  }
 
   if (!isCorrectAdminPassword(password)) {
     return NextResponse.redirect(new URL("/admin/login?error=1", request.url), 303);

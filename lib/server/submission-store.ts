@@ -3,8 +3,12 @@ import "server-only";
 import { randomUUID } from "crypto";
 import { mkdir, readFile, rename, writeFile } from "fs/promises";
 import path from "path";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { HostApplicationInput, ReservationInput } from "@/lib/validation";
+import {
+  getSubmissionStorageMode,
+  getSupabaseServerConfig,
+} from "@/lib/server/env";
 
 export interface ReservationRecord {
   id: string;
@@ -52,31 +56,35 @@ const emptyData: SubmissionData = {
 const dataDirectory = path.join(process.cwd(), ".data");
 const dataFile = path.join(dataDirectory, "submissions.json");
 let writeQueue = Promise.resolve();
+let supabaseClient: SupabaseClient | undefined;
 
-function storageMode() {
-  const mode = process.env.SUBMISSION_STORAGE?.toLowerCase();
-  if (mode !== "local" && mode !== "supabase") {
-    throw new Error(
-      "SUBMISSION_STORAGE must be explicitly set to either 'local' or 'supabase'."
-    );
+export class SubmissionStoreError extends Error {
+  constructor(operation: string) {
+    super(`Submission storage operation failed: ${operation}`);
+    this.name = "SubmissionStoreError";
   }
-  return mode;
 }
 
 function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey =
-    process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (supabaseClient) return supabaseClient;
+  const { url, serviceRoleKey } = getSupabaseServerConfig();
 
-  if (!url || !serviceRoleKey) {
-    throw new Error(
-      "Supabase storage is enabled, but NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SECRET_KEY is missing."
-    );
-  }
-
-  return createClient(url, serviceRoleKey, {
+  supabaseClient = createClient(url, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+  return supabaseClient;
+}
+
+function throwSupabaseError(
+  operation: string,
+  error: { code?: string; message: string; hint?: string | null }
+): never {
+  console.error(`[supabase] ${operation} failed`, {
+    code: error.code ?? "unknown",
+    message: error.message,
+    hint: error.hint ?? undefined,
+  });
+  throw new SubmissionStoreError(operation);
 }
 
 async function readLocalData(): Promise<SubmissionData> {
@@ -121,9 +129,9 @@ export async function createReservation(
     created_at: new Date().toISOString(),
   };
 
-  if (storageMode() === "supabase") {
+  if (getSubmissionStorageMode() === "supabase") {
     const { error } = await getSupabase().from("reservations").insert(record);
-    if (error) throw new Error(error.message);
+    if (error) throwSupabaseError("reservations.insert", error);
   } else {
     await updateLocalData((data) => data.reservations.unshift(record));
   }
@@ -149,9 +157,9 @@ export async function createHostApplication(input: HostApplicationInput) {
     created_at: new Date().toISOString(),
   };
 
-  if (storageMode() === "supabase") {
+  if (getSubmissionStorageMode() === "supabase") {
     const { error } = await getSupabase().from("host_applications").insert(record);
-    if (error) throw new Error(error.message);
+    if (error) throwSupabaseError("host_applications.insert", error);
   } else {
     await updateLocalData((data) => data.hostApplications.unshift(record));
   }
@@ -160,24 +168,24 @@ export async function createHostApplication(input: HostApplicationInput) {
 }
 
 export async function listReservations() {
-  if (storageMode() === "supabase") {
+  if (getSubmissionStorageMode() === "supabase") {
     const { data, error } = await getSupabase()
       .from("reservations")
       .select("*")
       .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) throwSupabaseError("reservations.select", error);
     return data as ReservationRecord[];
   }
   return (await readLocalData()).reservations;
 }
 
 export async function listHostApplications() {
-  if (storageMode() === "supabase") {
+  if (getSubmissionStorageMode() === "supabase") {
     const { data, error } = await getSupabase()
       .from("host_applications")
       .select("*")
       .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) throwSupabaseError("host_applications.select", error);
     return data as HostApplicationRecord[];
   }
   return (await readLocalData()).hostApplications;
@@ -187,14 +195,14 @@ export async function deleteSubmission(
   type: "reservations" | "hosts",
   id: string
 ) {
-  if (storageMode() === "supabase") {
+  if (getSubmissionStorageMode() === "supabase") {
     const table = type === "reservations" ? "reservations" : "host_applications";
     const { data, error } = await getSupabase()
       .from(table)
       .delete()
       .eq("id", id)
       .select("id");
-    if (error) throw new Error(error.message);
+    if (error) throwSupabaseError(`${table}.delete`, error);
     return Boolean(data?.length);
   }
 

@@ -27,15 +27,15 @@ For production, create a Supabase project, run `supabase/schema.sql` in the SQL
 editor, and set:
 
 ```env
-SUBMISSION_STORAGE=supabase
 ADMIN_PASSWORD=use-a-strong-private-password
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
-SUPABASE_SECRET_KEY=your-server-only-secret-key
+SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
 ```
 
-Keep `SUPABASE_SECRET_KEY` server-only. Never commit `.env.local` or expose the
-secret key in browser code.
+Vercel automatically uses Supabase storage. `SUBMISSION_STORAGE=local` is only
+for local development. Keep `SUPABASE_SERVICE_ROLE_KEY` server-only. Never
+commit `.env.local` or expose the service role key in browser code.
 
 ```bash
 npm run build   # production build

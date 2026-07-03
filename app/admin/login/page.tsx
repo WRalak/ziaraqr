@@ -27,7 +27,12 @@ export default async function AdminLoginPage({
             className="mt-2 w-full rounded-md2 border border-line bg-card px-4 py-4 font-body text-base normal-case tracking-normal text-text outline-none focus:border-gold-line"
           />
         </label>
-        {query.error && (
+        {query.error === "config" && (
+          <p role="alert" className="m-0 rounded-md2 border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-200">
+            Admin login is not configured on this deployment.
+          </p>
+        )}
+        {query.error && query.error !== "config" && (
           <p role="alert" className="m-0 rounded-md2 border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-200">
             Incorrect password.
           </p>

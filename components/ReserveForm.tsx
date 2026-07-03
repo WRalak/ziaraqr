@@ -29,10 +29,10 @@ export default function ReserveForm({ tripId }: { tripId: number }) {
         consent: formData.get("consent") === "on",
       }),
     });
-    const result = (await response.json()) as { error?: string };
+    const result = (await response.json()) as { error?: boolean; message?: string };
 
     if (!response.ok) {
-      setError(result.error ?? "We could not save your reservation.");
+      setError(result.message ?? "We could not save your reservation.");
       setSubmitting(false);
       return;
     }

@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const ADMIN_COOKIE = "ziarra_admin_session";
+let loggedMissingAdminPassword = false;
 
 async function expectedAdminToken() {
   const password = process.env.ADMIN_PASSWORD;
-  if (!password) return "";
+  if (!password) {
+    if (!loggedMissingAdminPassword) {
+      loggedMissingAdminPassword = true;
+      console.error("[config] Missing admin authentication environment variable.", {
+        variables: ["ADMIN_PASSWORD"],
+      });
+    }
+    return "";
+  }
 
   const bytes = new TextEncoder().encode(`ziarra-admin:${password}`);
   const digest = await crypto.subtle.digest("SHA-256", bytes);
