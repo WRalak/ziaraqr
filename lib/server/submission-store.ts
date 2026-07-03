@@ -67,9 +67,9 @@ export class SubmissionStoreError extends Error {
 
 function getSupabase() {
   if (supabaseClient) return supabaseClient;
-  const { url, serviceRoleKey } = getSupabaseServerConfig();
+  const { url, secretKey } = getSupabaseServerConfig();
 
-  supabaseClient = createClient(url, serviceRoleKey, {
+  supabaseClient = createClient(url, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   return supabaseClient;

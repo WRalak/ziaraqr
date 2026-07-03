@@ -30,12 +30,15 @@ editor, and set:
 ADMIN_PASSWORD=use-a-strong-private-password
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
-SUPABASE_SERVICE_ROLE_KEY=your-server-only-service-role-key
+SUPABASE_SECRET_KEY=your-server-only-secret-key
 ```
 
-Vercel automatically uses Supabase storage. `SUBMISSION_STORAGE=local` is only
-for local development. Keep `SUPABASE_SERVICE_ROLE_KEY` server-only. Never
-commit `.env.local` or expose the service role key in browser code.
+The variable name in Vercel's dashboard must match `SUPABASE_SECRET_KEY`
+exactly (for older projects, `SUPABASE_SERVICE_ROLE_KEY` is still accepted as
+a fallback). Vercel automatically uses Supabase storage —
+`SUBMISSION_STORAGE=local` is only for local development. Keep
+`SUPABASE_SECRET_KEY` server-only. Never commit `.env.local` or expose the
+secret key in browser code.
 
 ```bash
 npm run build   # production build

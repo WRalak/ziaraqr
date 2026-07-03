@@ -50,10 +50,16 @@ export function getSubmissionStorageMode(): "local" | "supabase" {
 
 export function getSupabaseServerConfig() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ?? "";
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ?? "";
+  // SUPABASE_SECRET_KEY is the current name (Supabase's "secret key" format,
+  // sb_secret_...). SUPABASE_SERVICE_ROLE_KEY is accepted as a fallback so
+  // existing Vercel projects configured under the old name keep working.
+  const secretKey =
+    process.env.SUPABASE_SECRET_KEY?.trim() ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ||
+    "";
   const missing = [
     !url && "NEXT_PUBLIC_SUPABASE_URL",
-    !serviceRoleKey && "SUPABASE_SERVICE_ROLE_KEY",
+    !secretKey && "SUPABASE_SECRET_KEY",
   ].filter((name): name is string => Boolean(name));
 
   if (missing.length) {
@@ -61,5 +67,5 @@ export function getSupabaseServerConfig() {
     throw new ServerConfigurationError(missing);
   }
 
-  return { url, serviceRoleKey };
+  return { url, secretKey };
 }

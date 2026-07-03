@@ -71,6 +71,9 @@ export async function POST(request: Request) {
         {
           error: true,
           message: "Reservations are temporarily unavailable due to server configuration.",
+          ...(process.env.NODE_ENV === "development"
+            ? { missing: error.variableNames }
+            : {}),
         },
         { status: 503 }
       );
@@ -86,6 +89,9 @@ export async function POST(request: Request) {
       {
         error: true,
         message: "We could not save your reservation. Please try again.",
+        ...(process.env.NODE_ENV === "development" && error instanceof Error
+          ? { detail: error.message }
+          : {}),
       },
       { status: 500 }
     );

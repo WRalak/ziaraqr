@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { hostApplicationSchema } from "@/lib/validation";
-import { createHostApplication } from "@/lib/server/submission-store";
+import {
+  createHostApplication,
+  SubmissionStoreError,
+} from "@/lib/server/submission-store";
 import { checkRateLimit } from "@/lib/server/rate-limit";
+import { ServerConfigurationError } from "@/lib/server/env";
 
 export const runtime = "nodejs";
 
@@ -57,9 +61,31 @@ export async function POST(request: Request) {
       { status: 201, headers: { "Cache-Control": "no-store" } }
     );
   } catch (error) {
-    console.error("Host application submission failed", error);
+    if (error instanceof ServerConfigurationError) {
+      return NextResponse.json(
+        {
+          error: "Host applications are temporarily unavailable due to server configuration.",
+          ...(process.env.NODE_ENV === "development"
+            ? { missing: error.variableNames }
+            : {}),
+        },
+        { status: 503 }
+      );
+    }
+
+    if (!(error instanceof SubmissionStoreError)) {
+      console.error("Host application submission failed", {
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message : "Unknown failure",
+      });
+    }
     return NextResponse.json(
-      { error: "We could not save your application. Please try again." },
+      {
+        error: "We could not save your application. Please try again.",
+        ...(process.env.NODE_ENV === "development" && error instanceof Error
+          ? { detail: error.message }
+          : {}),
+      },
       { status: 500 }
     );
   }
