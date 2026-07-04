@@ -7,7 +7,7 @@ const CHOICES = [
     href: "/discover",
     glyph: "🎒",
     title: "Join a Trip",
-    desc: "I want to join an upcoming adventure with other students.",
+    desc: "I want to join an upcoming adventure with others.",
     cta: "Browse trips →",
   },
   {
