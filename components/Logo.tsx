@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function Logo({
   size = 34,
   showWordmark = true,
@@ -11,13 +9,18 @@ export default function Logo({
 }) {
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
-      <Image
-        src="/ziarra-mark.svg"
-        alt="Ziarra"
-        width={size}
-        height={size}
-        priority
-        className="rounded-[9px]"
+      <div
+        role="img"
+        aria-label="Ziarra"
+        className="flex-shrink-0 rounded-[9px]"
+        style={{
+          width: size,
+          height: size,
+          backgroundImage: "url(/ziarrrr.jpeg)",
+          backgroundSize: "233% auto",
+          backgroundPosition: "51% 29%",
+          backgroundRepeat: "no-repeat",
+        }}
       />
       {showWordmark && (
         <span

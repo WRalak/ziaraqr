@@ -30,9 +30,9 @@ export const metadata: Metadata = {
   title: "Ziarra — Adventure Starts Here",
   description: "Join or host student trips across Kenya with Ziarra.",
   icons: {
-    icon: "/ziarra-mark.svg",
-    shortcut: "/ziarra-mark.svg",
-    apple: "/ziarra-mark.svg",
+    icon: "/ziarrrr.jpeg",
+    shortcut: "/ziarrrr.jpeg",
+    apple: "/ziarrrr.jpeg",
   },
 };
 
